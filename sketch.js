@@ -1,79 +1,59 @@
-var element = [];
-var eleCounter = 999;
-var count=0;
-var tempele = []
-var limit=105
+var vid;
 
-function preload(){
-  // put preload code here
-}
-
+var vScale = 16;
 
 function setup() {
-  createCanvas(windowWidth,windowHeight);
-  frameRate(120);
-  background(0);
+  createCanvas(320*2, 240*2);
+  pixelDensity(1);
+  vid = createCapture(VIDEO);
+  //frameRate(30)
+  vid.size(width / vScale, height / vScale);
 
 
-  for (var i = 0; i < eleCounter; i++) {
-    element[i] = new Myelement();
-  }
 }
 
 function draw() {
-  background(0);
-  stroke(255)
-  ellipse(width/2, height/2, 50);
+  background(51);
+  vid.loadPixels();
 
-
-  for (var i = 0; i < count+1; i++) {
-    element[i].display();
-  }
-  console.log(count)
-
-}
-
-function mouseClicked(){
-
-  count+=1;
-  element[count].coordinate();
-
-
-}
-
-function Myelement(){
-  this.coordinate = function(){
-  this.x = -(windowWidth/2-mouseX);
-  this.y = -(windowHeight/2-mouseY);
-  this.raggio = sqrt((this.x*this.x)+(this.y*this.y))
-  this.iteratorx = acos(this.x/this.raggio);
-  this.variable = 1
-  this.variabletwo = 1
-  this.limit=105
-  console.log(this.variable)
-  if (this.y<0) {
-    this.iteratorx=-this.iteratorx
-  }
-  }
-
-  this.transition = 50;
-  angleMode(DEGREES)
-  stroke(30)
-  this.display = function(){
-    this.iteratorx++
-    this.variable+=0.01
-    this.variabletwo+=0.1
-    this.raggio-=this.variable
-    // if (frameCount>1000) {
-    //   this.raggio+=10
-    // }
-    if (this.raggio<=limit) {
-      this.raggio=limit-5
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
+      var loc = (x + (y * vid.width)) * 4;
+      var r = vid.pixels[loc + 0];
+      var g = vid.pixels[loc + 1];
+      var b = vid.pixels[loc + 2];
+      var bright = (r + g + b) / 3
+      var w = map(bright, 0, 255, 0, 16);
+      noStroke();
+      //fill(r, g, b);
+      fill("red");
+      rectMode(CENTER);
+      rect(x * vScale + vScale / 2, y * vScale + vScale / 2, 10 , w);
+      // pixels[loc+0] = bright;
+      // pixels[loc+1] = bright;
+      // pixels[loc+2] = bright;
+      // pixels[loc+3] = vid.pixels[loc+3];
     }
-
-    this.mov = cos(this.iteratorx*this.variabletwo)*(this.raggio)+(windowWidth/2)
-    this.movi = sin(this.iteratorx*this.variabletwo)*(this.raggio)+(windowHeight/2)
-    ellipse(this.mov,this.movi,this.transition)
   }
 
+  // for (var y = 0; y < height; y++) {
+  //   for (var x = 0; x < width; x++) {
+  //     var loc = (x + (y * vid.width)) * 4;
+  //     var mvalue = 255
+  //     var d = dist(mouseX, mouseY, x * vScale + vScale / 2, y * vScale + vScale / 2)
+  //     if (d < 64) {
+  //       mvalue = 0;
+  //     }
+  //     // if (d < 120 && d>64) {
+  //     //   mvalue = 170;
+  //     // }
+  //
+  //     noStroke();
+  //     fill(0, 0, 0, mvalue);
+  //     rect(x * vScale + vScale / 2, y * vScale + vScale / 2, vScale, vScale);
+  //   }
+  // }
+
+
+  //updatePixels();
 }
